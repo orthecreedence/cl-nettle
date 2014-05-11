@@ -7,7 +7,7 @@
                                                       "-"
                                                       (symbol-name slot-name)))
              append (list `(defmacro ,accessor-name (ptr)
-                             (list 'foreign-slot-value ptr '(ne::cffi-type ,(intern (string c-struct) :nettle)) '',slot-name))
+                             (list 'foreign-slot-value ptr '(le::cffi-type ,(intern (string c-struct) :nettle)) '',slot-name))
                           `(export ',accessor-name :nettle.accessors)))))
 
 (make-accessors #.(nettle::lispify "aes_ctx" 'classname))

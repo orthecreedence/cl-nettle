@@ -38,7 +38,7 @@
                   ((constant enumvalue) "+")
                   (variable "*")
                   (t "")))
-           (symstr (concatenate 'string fix (nreverse (helper (concatenate 'list (strip-prefix "cp" name)) nil nil)) fix))
+           (symstr (concatenate 'string fix (nreverse (helper (concatenate 'list (strip-prefix "nettle_" name)) nil nil)) fix))
            ;; test for "modern" lisp
            (case-insensitive-p (eq (intern "MYSYM" :nettle) 'nettle::mysym)))
       (intern (if case-insensitive-p

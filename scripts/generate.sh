@@ -17,16 +17,17 @@ sed -i "s|(cl:logior \([0-9]\+\) ASN1_TYPE_CONSTRUCTED)|(cl:logior \1 $ASN1_TYPE
 echo -ne "(in-package :nettle)\n\n" > exports.lisp
 cat bindings.lisp | \
     grep -e '^(\(cffi\|cl\):' | \
-    grep -v 'defcstruct' | \
     sed 's|^(cffi:defcfun.*" \(#.(lispify[^)]\+)\).*|\1|' | \
     sed 's|^(cffi:defcenum.*\(#.(lispify[^)]\+)\).*|\1|' | \
     sed 's|^(cffi:defcunion.*\(#.(lispify[^)]\+)\).*|\1|' | \
     sed 's|^(cffi:defcvar.*\(#.(lispify[^)]\+)\).*|\1|' | \
+    sed 's|^(cffi:defcstruct.*\(#.(lispify[^)]\+)\).*|\1|' | \
     sed 's|^(cl:defconstant.*\(#.(lispify[^)]\+)\).*|\1|' | \
     sed 's|^\(.*\)$|(export '"'"'\1)|' \
     >> exports.lisp
 echo >> exports.lisp
 
+# anonymous enum BS
 cat bindings.lisp | \
 	grep "'enumvalue)" | \
 	sed 's|^\s*(\?||' | \
