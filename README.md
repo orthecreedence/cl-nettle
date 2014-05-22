@@ -1,33 +1,19 @@
 Nettle bindings for Common Lisp
 ===============================
-This is a set of low-level bindings to the [Nettle](http://www.lysator.liu.se/~nisse/nettle/),
-as well as a very thin layer of abstraction to make things a bit more lispy than
-running raw C functions.
+This is a set of low-level bindings to the [Nettle](http://www.lysator.liu.se/~nisse/nettle/)
+library, as well as a thin layer of fixes and high(er)-level functionality over
+the raw bindings.
 
 The goal of this project is to provide people who know what they're doing a
 method of performing cryptography in Common Lisp using a well tested library.
-This project does not come with any warranty, and most certainly will not try to
-stop you from shooting yourself in the foot.
+This library is best used if you have an understanding of the underlying crypto
+primitives and how they function.
 
-Conventions
------------
-Who needs documentation when you follow simple function-naming conventions?
+Documentation
+-------------
 
-- The package prefix is `ne:`
-- Underscores become dashes
-
-See the examples/ folder and also the [Nettle documentation](http://www.lysator.liu.se/~nisse/nettle/nettle.html).
-
-### Example
-```c
-char * test;
-```
-
-Becomes:
-
-```common-lisp
-(let ((test nil)))
-```
+TODO (sorry). For now, check high-level/package.lisp and look at the definitions
+of the exported functions.
 
 (re)Generating
 --------------
