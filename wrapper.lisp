@@ -23,7 +23,7 @@
                ((digit-char-p c)
                 (helper (cdr lst) 'digit 
                         (case last
-                          ((upper lower) (list* c #\- rest))
+                          ((upper lower) (list* c rest))
                           (t (cons c rest)))))
                ((char-equal c #\_)
                 (helper (cdr lst) '_ (cons #\- rest)))

@@ -11,8 +11,9 @@
 (eval-when (:load-toplevel)
   (define-foreign-library nettle
     (:darwin (:or "nettle.dylib"))
-    (:unix (:or "libnettle.so"))
-    (:windows (:or "libnettle-4-6.dll"
+    (:unix (:or "libnettle.so.4.7"
+                "libnettle.so"))
+    (:windows (:or "libnettle-4-7.dll"
                    "libnettle.dll"))
     (t (:default "libnettle")))
   (unless (foreign-library-loaded-p 'nettle)
@@ -20,8 +21,9 @@
 
   (define-foreign-library hogweed
     (:darwin (:or "hogweed.dylib"))
-    (:unix (:or "libhogweed.so"))
-    (:windows (:or "libhogweed-2-4.dll"
+    (:unix (:or "libhogweek.so.2.5"
+                "libhogweed.so"))
+    (:windows (:or "libhogweed-2-5.dll"
                    "libhogweed.dll"))
     (t (:default "libhogweed")))
   (unless (foreign-library-loaded-p 'hogweed)

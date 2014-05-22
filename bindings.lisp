@@ -16,10 +16,6 @@
 
 (cl:defconstant #.(lispify "AES_KEY_SIZE" 'constant) 32)
 
-(cffi:defcstruct #.(lispify "aes_ctx" 'classname)
-	(#.(lispify "keys" 'slotname) :pointer)
-	(#.(lispify "nrounds" 'slotname) :unsigned-int))
-
 (cffi:defcfun ("nettle_aes_set_encrypt_key" #.(lispify "nettle_aes_set_encrypt_key" 'function)) :void
   (ctx :pointer)
   (length :unsigned-int)
@@ -54,8 +50,8 @@
 
 (cffi:defcstruct #.(lispify "arcfour_ctx" 'classname)
 	(#.(lispify "S" 'slotname) :pointer)
-	(#.(lispify "i" 'slotname) :pointer)
-	(#.(lispify "j" 'slotname) :pointer))
+	(#.(lispify "i" 'slotname) :unsigned-char)
+	(#.(lispify "j" 'slotname) :unsigned-char))
 
 (cffi:defcfun ("nettle_arcfour_set_key" #.(lispify "nettle_arcfour_set_key" 'function)) :void
   (ctx :pointer)
@@ -177,7 +173,7 @@
 
 (cffi:defcfun ("nettle_base16_encode_single" #.(lispify "nettle_base16_encode_single" 'function)) :void
   (dst :pointer)
-  (src :pointer))
+  (src :unsigned-char))
 
 (cffi:defcfun ("nettle_base16_encode_update" #.(lispify "nettle_base16_encode_update" 'function)) :void
   (dst :pointer)
@@ -194,7 +190,7 @@
 (cffi:defcfun ("nettle_base16_decode_single" #.(lispify "nettle_base16_decode_single" 'function)) :int
   (ctx :pointer)
   (dst :pointer)
-  (src :pointer))
+  (src :unsigned-char))
 
 (cffi:defcfun ("nettle_base16_decode_update" #.(lispify "nettle_base16_decode_update" 'function)) :int
   (ctx :pointer)
@@ -222,7 +218,7 @@
 (cffi:defcfun ("nettle_base64_encode_single" #.(lispify "nettle_base64_encode_single" 'function)) :unsigned-int
   (ctx :pointer)
   (dst :pointer)
-  (src :pointer))
+  (src :unsigned-char))
 
 (cffi:defcfun ("nettle_base64_encode_update" #.(lispify "nettle_base64_encode_update" 'function)) :unsigned-int
   (ctx :pointer)
@@ -241,7 +237,7 @@
 
 (cffi:defcfun ("nettle_base64_encode_group" #.(lispify "nettle_base64_encode_group" 'function)) :void
   (dst :pointer)
-  (group :pointer))
+  (group :unsigned-int))
 
 (cffi:defcstruct #.(lispify "base64_decode_ctx" 'classname)
 	(#.(lispify "word" 'slotname) :unsigned-int)
@@ -254,7 +250,7 @@
 (cffi:defcfun ("nettle_base64_decode_single" #.(lispify "nettle_base64_decode_single" 'function)) :int
   (ctx :pointer)
   (dst :pointer)
-  (src :pointer))
+  (src :unsigned-char))
 
 (cffi:defcfun ("nettle_base64_decode_update" #.(lispify "nettle_base64_decode_update" 'function)) :int
   (ctx :pointer)
@@ -565,70 +561,6 @@
   (length :unsigned-int)
   (dst :pointer)
   (src :pointer))
-
-(defanonenum 
-	(#.(lispify "DES_DECRYPT" 'enumvalue) #.0)
-	(#.(lispify "DES_ENCRYPT" 'enumvalue) #.1))
-
-(cffi:defcvar ("nettle_openssl_des_check_key" #.(lispify "nettle_openssl_des_check_key" 'variable))
- :int)
-
-(cffi:defcfun ("nettle_openssl_des_ecb3_encrypt" #.(lispify "nettle_openssl_des_ecb3_encrypt" 'function)) :void
-  (src :pointer)
-  (dst :pointer)
-  (k1 :pointer)
-  (k2 :pointer)
-  (k3 :pointer)
-  (enc :int))
-
-(cffi:defcfun ("nettle_openssl_des_cbc_cksum" #.(lispify "nettle_openssl_des_cbc_cksum" 'function)) :pointer
-  (src :pointer)
-  (dst :pointer)
-  (length :long)
-  (ctx :pointer)
-  (iv :pointer))
-
-(cffi:defcfun ("nettle_openssl_des_cbc_encrypt" #.(lispify "nettle_openssl_des_cbc_encrypt" 'function)) :void
-  (src :pointer)
-  (dst :pointer)
-  (length :long)
-  (ctx :pointer)
-  (iv :pointer)
-  (enc :int))
-
-(cffi:defcfun ("nettle_openssl_des_ncbc_encrypt" #.(lispify "nettle_openssl_des_ncbc_encrypt" 'function)) :void
-  (src :pointer)
-  (dst :pointer)
-  (length :long)
-  (ctx :pointer)
-  (iv :pointer)
-  (enc :int))
-
-(cffi:defcfun ("nettle_openssl_des_ecb_encrypt" #.(lispify "nettle_openssl_des_ecb_encrypt" 'function)) :void
-  (src :pointer)
-  (dst :pointer)
-  (ctx :pointer)
-  (enc :int))
-
-(cffi:defcfun ("nettle_openssl_des_ede3_cbc_encrypt" #.(lispify "nettle_openssl_des_ede3_cbc_encrypt" 'function)) :void
-  (src :pointer)
-  (dst :pointer)
-  (length :long)
-  (k1 :pointer)
-  (k2 :pointer)
-  (k3 :pointer)
-  (iv :pointer)
-  (enc :int))
-
-(cffi:defcfun ("nettle_openssl_des_set_odd_parity" #.(lispify "nettle_openssl_des_set_odd_parity" 'function)) :int
-  (key :pointer))
-
-(cffi:defcfun ("nettle_openssl_des_key_sched" #.(lispify "nettle_openssl_des_key_sched" 'function)) :int
-  (key :pointer)
-  (ctx :pointer))
-
-(cffi:defcfun ("nettle_openssl_des_is_weak_key" #.(lispify "nettle_openssl_des_is_weak_key" 'function)) :int
-  (key :pointer))
 
 (cl:defconstant #.(lispify "DSA_SHA1_MIN_P_BITS" 'constant) 512)
 
@@ -1017,20 +949,6 @@
 
 (cl:defconstant #.(lispify "GCM_TABLE_BITS" 'constant) 8)
 
-(cffi:defcunion #.(lispify "gcm_block" 'classname)
-	(#.(lispify "b" 'slotname) :pointer)
-	(#.(lispify "w" 'slotname) :pointer))
-
-(cffi:defcstruct #.(lispify "gcm_key" 'classname)
-	(#.(lispify "h" 'slotname) :pointer))
-
-(cffi:defcstruct #.(lispify "gcm_ctx" 'classname)
-	(#.(lispify "iv" 'slotname) #.(lispify "gcm_block" 'classname))
-	(#.(lispify "ctr" 'slotname) #.(lispify "gcm_block" 'classname))
-	(#.(lispify "x" 'slotname) #.(lispify "gcm_block" 'classname))
-	(#.(lispify "auth_size" 'slotname) :pointer)
-	(#.(lispify "data_size" 'slotname) :pointer))
-
 (cffi:defcfun ("nettle_gcm_set_key" #.(lispify "nettle_gcm_set_key" 'function)) :void
   (key :pointer)
   (cipher :pointer)
@@ -1074,11 +992,6 @@
   (length :unsigned-int)
   (digest :pointer))
 
-(cffi:defcstruct #.(lispify "gcm_aes_ctx" 'classname)
-	(#.(lispify "cipher" 'slotname) #.(lispify "aes_ctx" 'classname))
-	(#.(lispify "key" 'slotname) #.(lispify "gcm_key" 'classname))
-	(#.(lispify "gcm" 'slotname) #.(lispify "gcm_ctx" 'classname)))
-
 (cffi:defcfun ("nettle_gcm_aes_set_key" #.(lispify "nettle_gcm_aes_set_key" 'function)) :void
   (ctx :pointer)
   (length :unsigned-int)
@@ -1119,7 +1032,7 @@
 	(#.(lispify "hash" 'slotname) :pointer)
 	(#.(lispify "sum" 'slotname) :pointer)
 	(#.(lispify "message" 'slotname) :pointer)
-	(#.(lispify "length" 'slotname) :pointer))
+	(#.(lispify "length" 'slotname) :unsigned-long-long))
 
 (cffi:defcfun ("nettle_gosthash94_init" #.(lispify "nettle_gosthash94_init" 'function)) :void
   (ctx :pointer))
@@ -1284,9 +1197,9 @@
 
 (cffi:defcfun ("nettle_knuth_lfib_init" #.(lispify "nettle_knuth_lfib_init" 'function)) :void
   (ctx :pointer)
-  (seed :pointer))
+  (seed :unsigned-int))
 
-(cffi:defcfun ("nettle_knuth_lfib_get" #.(lispify "nettle_knuth_lfib_get" 'function)) :pointer
+(cffi:defcfun ("nettle_knuth_lfib_get" #.(lispify "nettle_knuth_lfib_get" 'function)) :unsigned-int
   (ctx :pointer))
 
 (cffi:defcfun ("nettle_knuth_lfib_get_array" #.(lispify "nettle_knuth_lfib_get_array" 'function)) :void
@@ -1330,8 +1243,8 @@
 
 (cffi:defcstruct #.(lispify "md4_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-int)
+	(#.(lispify "count_high" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -1356,8 +1269,8 @@
 
 (cffi:defcstruct #.(lispify "md5_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-int)
+	(#.(lispify "count_high" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -1378,28 +1291,16 @@
   (state :pointer)
   (data :pointer))
 
-(cffi:defcfun ("nettle_MD5Init" #.(lispify "nettle_MD5Init" 'function)) :void
-  (ctx :pointer))
-
-(cffi:defcfun ("nettle_MD5Update" #.(lispify "nettle_MD5Update" 'function)) :void
-  (ctx :pointer)
-  (data :pointer)
-  (length :unsigned-int))
-
-(cffi:defcfun ("nettle_MD5Final" #.(lispify "nettle_MD5Final" 'function)) :void
-  (out :pointer)
-  (ctx :pointer))
-
 (cffi:defcfun ("memxor" #.(lispify "memxor" 'function)) :pointer
   (dst :pointer)
   (src :pointer)
-  (n :pointer))
+  (n :unsigned-int))
 
 (cffi:defcfun ("memxor3" #.(lispify "memxor3" 'function)) :pointer
   (dst :pointer)
   (a :pointer)
   (b :pointer)
-  (n :pointer))
+  (n :unsigned-int))
 
 (cffi:defcstruct #.(lispify "nettle_cipher" 'classname)
 	(#.(lispify "name" 'slotname) :string)
@@ -1584,7 +1485,7 @@
 
 (cffi:defcfun ("nettle_pgp_put_uint32" #.(lispify "nettle_pgp_put_uint32" 'function)) :int
   (buffer :pointer)
-  (i :pointer))
+  (i :unsigned-int))
 
 (cffi:defcfun ("nettle_pgp_put_uint16" #.(lispify "nettle_pgp_put_uint16" 'function)) :int
   (buffer :pointer)
@@ -1643,7 +1544,7 @@
   (length :unsigned-int)
   (name :pointer))
 
-(cffi:defcfun ("nettle_pgp_crc24" #.(lispify "nettle_pgp_crc24" 'function)) :pointer
+(cffi:defcfun ("nettle_pgp_crc24" #.(lispify "nettle_pgp_crc24" 'function)) :unsigned-int
   (length :unsigned-int)
   (data :pointer))
 
@@ -1829,8 +1730,8 @@
 
 (cffi:defcstruct #.(lispify "ripemd160_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-int)
+	(#.(lispify "count_high" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -2089,75 +1990,6 @@
   (c :pointer)
   (ri :pointer))
 
-(cl:defconstant #.(lispify "MAX_RSA_MODULUS_LEN" 'constant) 256)
-
-(cffi:defcstruct #.(lispify "R_RSA_PUBLIC_KEY" 'classname)
-	(#.(lispify "bits" 'slotname) :unsigned-int)
-	(#.(lispify "modulus" 'slotname) :pointer)
-	(#.(lispify "exponent" 'slotname) :pointer))
-
-(cffi:defcstruct #.(lispify "R_RSA_PRIVATE_KEY" 'classname)
-	(#.(lispify "bits" 'slotname) :unsigned-int)
-	(#.(lispify "modulus" 'slotname) :pointer)
-	(#.(lispify "publicExponent" 'slotname) :pointer)
-	(#.(lispify "exponent" 'slotname) :pointer)
-	(#.(lispify "prime" 'slotname) :pointer)
-	(#.(lispify "primeExponent" 'slotname) :pointer)
-	(#.(lispify "coefficient" 'slotname) :pointer))
-
-(cffi:defcstruct #.(lispify "R_SIGNATURE_CTX" 'classname)
-	(#.(lispify "hash" 'slotname) #.(lispify "md5_ctx" 'classname)))
-
-(defanonenum 
-	(#.(lispify "DA_MD5" 'enumvalue) #.1))
-
-(defanonenum 
-	(#.(lispify "RE_SUCCESS" 'enumvalue) #.0)
-	#.(lispify "RE_CONTENT_ENCODING" 'enumvalue)
-	#.(lispify "RE_DATA" 'enumvalue)
-	#.(lispify "RE_DIGEST_ALGORITHM" 'enumvalue)
-	#.(lispify "RE_ENCODING" 'enumvalue)
-	#.(lispify "RE_ENCRYPTION_ALGORITHM" 'enumvalue)
-	#.(lispify "RE_KEY" 'enumvalue)
-	#.(lispify "RE_KEY_ENCODING" 'enumvalue)
-	#.(lispify "RE_LEN" 'enumvalue)
-	#.(lispify "RE_MODULUS_LEN" 'enumvalue)
-	#.(lispify "RE_NEED_RANDOM" 'enumvalue)
-	#.(lispify "RE_PRIVATE_KEY" 'enumvalue)
-	#.(lispify "RE_PUBLIC_KEY" 'enumvalue)
-	#.(lispify "RE_SIGNATURE" 'enumvalue)
-	#.(lispify "RE_SIGNATURE_ENCODING" 'enumvalue))
-
-(cffi:defcfun ("nettle_R_SignInit" #.(lispify "nettle_R_SignInit" 'function)) :int
-  (ctx :pointer)
-  (digestAlgorithm :int))
-
-(cffi:defcfun ("nettle_R_SignUpdate" #.(lispify "nettle_R_SignUpdate" 'function)) :int
-  (ctx :pointer)
-  (data :pointer)
-  (length :unsigned-int))
-
-(cffi:defcfun ("nettle_R_SignFinal" #.(lispify "nettle_R_SignFinal" 'function)) :int
-  (ctx :pointer)
-  (signature :pointer)
-  (length :pointer)
-  (key :pointer))
-
-(cffi:defcfun ("nettle_R_VerifyInit" #.(lispify "nettle_R_VerifyInit" 'function)) :int
-  (ctx :pointer)
-  (digestAlgorithm :int))
-
-(cffi:defcfun ("nettle_R_VerifyUpdate" #.(lispify "nettle_R_VerifyUpdate" 'function)) :int
-  (ctx :pointer)
-  (data :pointer)
-  (length :unsigned-int))
-
-(cffi:defcfun ("nettle_R_VerifyFinal" #.(lispify "nettle_R_VerifyFinal" 'function)) :int
-  (ctx :pointer)
-  (signature :pointer)
-  (length :unsigned-int)
-  (key :pointer))
-
 (cl:defconstant #.(lispify "SALSA20_MIN_KEY_SIZE" 'constant) 16)
 
 (cl:defconstant #.(lispify "SALSA20_MAX_KEY_SIZE" 'constant) 32)
@@ -2317,8 +2149,8 @@
 
 (cffi:defcstruct #.(lispify "sha1_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-int)
+	(#.(lispify "count_high" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -2347,8 +2179,8 @@
 
 (cffi:defcstruct #.(lispify "sha256_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-int)
+	(#.(lispify "count_high" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -2390,8 +2222,8 @@
 
 (cffi:defcstruct #.(lispify "sha512_ctx" 'classname)
 	(#.(lispify "state" 'slotname) :pointer)
-	(#.(lispify "count_low" 'slotname) :pointer)
-	(#.(lispify "count_high" 'slotname) :pointer)
+	(#.(lispify "count_low" 'slotname) :unsigned-long-long)
+	(#.(lispify "count_high" 'slotname) :unsigned-long-long)
 	(#.(lispify "block" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int))
 
@@ -2583,14 +2415,14 @@
 	(#.(lispify "l2_key" 'slotname) :pointer)
 	(#.(lispify "l3_key1" 'slotname) :pointer)
 	(#.(lispify "l3_key2" 'slotname) :pointer)
-	(#.(lispify "pdf_key" 'slotname) #.(lispify "aes_ctx" 'classname))
+	(#.(lispify "pdf_key" 'slotname) :pointer)
 	(#.(lispify "l2_state" 'slotname) :pointer)
 	(#.(lispify "nonce" 'slotname) :pointer)
 	(#.(lispify "nonce_length" 'slotname) :unsigned-short)
 	(#.(lispify "nonce_low" 'slotname) :unsigned-short)
 	(#.(lispify "pad_cache" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int)
-	(#.(lispify "count" 'slotname) :pointer)
+	(#.(lispify "count" 'slotname) :unsigned-long-long)
 	(#.(lispify "block" 'slotname) :pointer))
 
 (cffi:defcstruct #.(lispify "umac64_ctx" 'classname)
@@ -2598,14 +2430,14 @@
 	(#.(lispify "l2_key" 'slotname) :pointer)
 	(#.(lispify "l3_key1" 'slotname) :pointer)
 	(#.(lispify "l3_key2" 'slotname) :pointer)
-	(#.(lispify "pdf_key" 'slotname) #.(lispify "aes_ctx" 'classname))
+	(#.(lispify "pdf_key" 'slotname) :pointer)
 	(#.(lispify "l2_state" 'slotname) :pointer)
 	(#.(lispify "nonce" 'slotname) :pointer)
 	(#.(lispify "nonce_length" 'slotname) :unsigned-short)
 	(#.(lispify "nonce_low" 'slotname) :unsigned-short)
 	(#.(lispify "pad_cache" 'slotname) :pointer)
 	(#.(lispify "index" 'slotname) :unsigned-int)
-	(#.(lispify "count" 'slotname) :pointer)
+	(#.(lispify "count" 'slotname) :unsigned-long-long)
 	(#.(lispify "block" 'slotname) :pointer))
 
 (cffi:defcstruct #.(lispify "umac96_ctx" 'classname)
@@ -2613,12 +2445,12 @@
 	(#.(lispify "l2_key" 'slotname) :pointer)
 	(#.(lispify "l3_key1" 'slotname) :pointer)
 	(#.(lispify "l3_key2" 'slotname) :pointer)
-	(#.(lispify "pdf_key" 'slotname) #.(lispify "aes_ctx" 'classname))
+	(#.(lispify "pdf_key" 'slotname) :pointer)
 	(#.(lispify "l2_state" 'slotname) :pointer)
 	(#.(lispify "nonce" 'slotname) :pointer)
 	(#.(lispify "nonce_length" 'slotname) :unsigned-short)
 	(#.(lispify "index" 'slotname) :unsigned-int)
-	(#.(lispify "count" 'slotname) :pointer)
+	(#.(lispify "count" 'slotname) :unsigned-long-long)
 	(#.(lispify "block" 'slotname) :pointer))
 
 (cffi:defcstruct #.(lispify "umac128_ctx" 'classname)
@@ -2626,12 +2458,12 @@
 	(#.(lispify "l2_key" 'slotname) :pointer)
 	(#.(lispify "l3_key1" 'slotname) :pointer)
 	(#.(lispify "l3_key2" 'slotname) :pointer)
-	(#.(lispify "pdf_key" 'slotname) #.(lispify "aes_ctx" 'classname))
+	(#.(lispify "pdf_key" 'slotname) :pointer)
 	(#.(lispify "l2_state" 'slotname) :pointer)
 	(#.(lispify "nonce" 'slotname) :pointer)
 	(#.(lispify "nonce_length" 'slotname) :unsigned-short)
 	(#.(lispify "index" 'slotname) :unsigned-int)
-	(#.(lispify "count" 'slotname) :pointer)
+	(#.(lispify "count" 'slotname) :unsigned-long-long)
 	(#.(lispify "block" 'slotname) :pointer))
 
 (cffi:defcfun ("nettle_umac32_set_key" #.(lispify "nettle_umac32_set_key" 'function)) :void
@@ -2725,7 +2557,7 @@
   (key :pointer)
   (n :unsigned-int))
 
-(cffi:defcfun ("_nettle_umac_nh" #.(lispify "_nettle_umac_nh" 'function)) :pointer
+(cffi:defcfun ("_nettle_umac_nh" #.(lispify "_nettle_umac_nh" 'function)) :unsigned-long-long
   (key :pointer)
   (length :unsigned-int)
   (msg :pointer))
@@ -2737,17 +2569,17 @@
   (length :unsigned-int)
   (msg :pointer))
 
-(cffi:defcfun ("_nettle_umac_poly64" #.(lispify "_nettle_umac_poly64" 'function)) :pointer
-  (kh :pointer)
-  (kl :pointer)
-  (y :pointer)
-  (m :pointer))
+(cffi:defcfun ("_nettle_umac_poly64" #.(lispify "_nettle_umac_poly64" 'function)) :unsigned-long-long
+  (kh :unsigned-int)
+  (kl :unsigned-int)
+  (y :unsigned-long-long)
+  (m :unsigned-long-long))
 
 (cffi:defcfun ("_nettle_umac_poly128" #.(lispify "_nettle_umac_poly128" 'function)) :void
   (k :pointer)
   (y :pointer)
-  (mh :pointer)
-  (ml :pointer))
+  (mh :unsigned-long-long)
+  (ml :unsigned-long-long))
 
 (cffi:defcfun ("_nettle_umac_l2_init" #.(lispify "_nettle_umac_l2_init" 'function)) :void
   (size :unsigned-int)
@@ -2757,20 +2589,20 @@
   (key :pointer)
   (state :pointer)
   (n :unsigned-int)
-  (count :pointer)
+  (count :unsigned-long-long)
   (m :pointer))
 
 (cffi:defcfun ("_nettle_umac_l2_final" #.(lispify "_nettle_umac_l2_final" 'function)) :void
   (key :pointer)
   (state :pointer)
   (n :unsigned-int)
-  (count :pointer))
+  (count :unsigned-long-long))
 
 (cffi:defcfun ("_nettle_umac_l3_init" #.(lispify "_nettle_umac_l3_init" 'function)) :void
   (size :unsigned-int)
   (k :pointer))
 
-(cffi:defcfun ("_nettle_umac_l3" #.(lispify "_nettle_umac_l3" 'function)) :pointer
+(cffi:defcfun ("_nettle_umac_l3" #.(lispify "_nettle_umac_l3" 'function)) :unsigned-int
   (key :pointer)
   (m :pointer))
 
@@ -2787,7 +2619,7 @@
 (cffi:defcstruct #.(lispify "yarrow256_ctx" 'classname)
 	(#.(lispify "pools" 'slotname) :pointer)
 	(#.(lispify "seeded" 'slotname) :int)
-	(#.(lispify "key" 'slotname) #.(lispify "aes_ctx" 'classname))
+	(#.(lispify "key" 'slotname) :pointer)
 	(#.(lispify "counter" 'slotname) :pointer)
 	(#.(lispify "nsources" 'slotname) :unsigned-int)
 	(#.(lispify "sources" 'slotname) :pointer))
