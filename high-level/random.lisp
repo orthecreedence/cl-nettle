@@ -3,6 +3,9 @@
 (define-condition nettle-random-error (nettle-error) ()
   (:documentation "General PRNG error."))
 
+(define-condition nettle-random-init-fail (nettle-random-error) ()
+  (:documentation "Thrown when random context init fails."))
+
 (define-condition nettle-random-already-open (nettle-random-error) ()
   (:documentation "Thrown when initing the already-open random context."))
 
@@ -29,12 +32,17 @@
     (buffer :pointer)
     (buffer-size :unsigned-long)))
 
-(defun random-init-windows ()
+(defun random-init-bytes-windows ()
+  "Grab 32 bytes of random data from the windows API."
+  ;; TODO: possibly use more entropy? PID? etc etc
   (with-static-vectors ((bytes 32))
-    (%rtl-gen-random (static-vector-pointer bytes) 32)
+    (when (zerop (%rtl-gen-random (static-vector-pointer bytes) 32))
+      (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
     (copy-seq bytes)))
 
-(defun random-init-nix ()
+(defun random-init-bytes-nix ()
+  "Grab 32 bytes of random data from a sane API."
+  ;; TODO: possibly use more entropy? PID? etc etc
   (let ((bytes (make-array 32 :element-type 'octet)))
     (with-open-file (rand "/dev/urandom" :direction :input :element-type 'octet)
       (dotimes (i 32)
@@ -42,16 +50,21 @@
     bytes))
 
 (defun random-init ()
+  "Initialize the random context (seeing it with random values from the OS).
+   Once initialized, the context stays open until random-close is called (or
+   until a comet hits earth, obliterating everything in its path).
+
+   TODO: add in random-state-preserving comet countermeasures"
   (when *yarrow-ctx*
     (error 'nettle-random-already-open :msg "Random context already open"))
-  (let ((random-bytes (progn
-                        #+(and windows (not cygwin)) (random-init-windows)
-                        #-(and windows (not cygwin)) (random-init-posix))))
-    (with-static-vectors ((seed 32))
+  (let ((seed (progn
+                #+(and windows (not cygwin)) (random-init-bytes-windows)
+                #-(and windows (not cygwin)) (random-init-bytes-nix))))
+    (with-static-vectors ((seed-s 32))
       (let ((ctx (cffi:foreign-alloc :char :count +yarrow256-ctx-size+)))
-        (replace seed random-bytes)
+        (replace seed-s seed)
         (ne:yarrow256-init ctx 0 (cffi:null-pointer))
-        (ne:yarrow256-seed ctx ne:+yarrow256-seed-file-size+ (static-vector-pointer seed))
+        (ne:yarrow256-seed ctx ne:+yarrow256-seed-file-size+ (static-vector-pointer seed-s))
         (setf *yarrow-ctx* ctx)))
     t))
 
