@@ -61,3 +61,14 @@
                          ,@form))))))
     (car form)))
 
+(defun int-to-bytes (int)
+  "Convert an integer of arbitrary size into a byte array."
+  (let ((bytes nil)
+        (val int))
+    (loop do
+      (when (zerop val)
+        (return))
+      (push (logand val #xFF) bytes)
+      (setf val (ash val -8)))
+    (make-array (length bytes) :element-type 'octet :initial-contents bytes)))
+
