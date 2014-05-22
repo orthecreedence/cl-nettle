@@ -3,6 +3,10 @@
   (:nicknames :nec)
   (:export #:nettle-error
            #:nettle-auth-error
+           #:octet
+           #:octet-array
+           #:with-crypto-object
+           #:with-static-vectors
 
            #:random-init
            #:random-close
