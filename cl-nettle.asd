@@ -4,7 +4,8 @@
   :version "0.1.0"
   :description "Low-level Nettle bindings for Common Lisp."
   :depends-on (#:cffi
-               #:static-vectors)
+               #:static-vectors
+               #:babel)
   :components
   ((:file "nettle")
    (:file "wrapper" :depends-on ("nettle"))

@@ -32,37 +32,51 @@
     (buffer :pointer)
     (buffer-size :unsigned-long)))
 
-(defun random-init-bytes-windows ()
+(defun random-init-bytes-windows (num-bytes)
   "Grab 32 bytes of random data from the windows API."
-  ;; TODO: possibly use more entropy? PID? etc etc
-  (with-static-vectors ((bytes 32))
-    (when (zerop (%rtl-gen-random (static-vector-pointer bytes) 32))
+  (with-static-vectors ((bytes num-bytes))
+    (when (zerop (%rtl-gen-random (static-vector-pointer bytes) num-bytes))
       (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
     (copy-seq bytes)))
 
-(defun random-init-bytes-nix ()
+(defun random-init-bytes-nix (num-bytes)
   "Grab 32 bytes of random data from a sane API."
-  ;; TODO: possibly use more entropy? PID? etc etc
-  (let ((bytes (make-array 32 :element-type 'octet)))
+  (let ((bytes (make-array num-bytes :element-type 'octet)))
     (with-open-file (rand "/dev/urandom" :direction :input :element-type 'octet)
-      (dotimes (i 32)
+      (dotimes (i num-bytes)
         (set (aref bytes i) (read-byte rand))))
     bytes))
 
 (defun random-init ()
-  "Initialize the random context (seeing it with random values from the OS).
-   Once initialized, the context stays open until random-close is called (or
-   until a comet hits earth, obliterating everything in its path).
+  "Initialize the random context. This is done by taking random bytes from the
+   underlying OS, appending some other process-specific information (the current
+   PID, the machine name, HOME and PATH env vars, and SHA256 hashing the entire
+   byte array. This gives us a 32 byte array we use as the initial Yarrow seed.
+   The idea is that we don't necessarily want to trust the OS to give us good
+   random data, so we supplement it with other various bits of information we
+   have access to. Luckily because of the way hashing works, we can only ever
+   add entropy (not weaken it) by piling in the data.
+   
+   Once initialized, the random context stays open until random-close is called
+   (or until a comet hits earth, obliterating everything in its path).
 
    TODO: add in random-state-preserving comet countermeasures"
   (when *yarrow-ctx*
     (error 'nettle-random-already-open :msg "Random context already open"))
-  (let ((seed (progn
-                #+(and windows (not cygwin)) (random-init-bytes-windows)
-                #-(and windows (not cygwin)) (random-init-bytes-nix))))
-    (with-static-vectors ((seed-s 32))
+  (let* ((num-bytes 512)
+         (seed-bytes (concatenate
+                       'octet-array
+                       (progn
+                         #+(and windows (not cygwin)) (random-init-bytes-windows num-bytes)
+                         #-(and windows (not cygwin)) (random-init-bytes-nix num-bytes))
+                       (int-to-bytes (get-current-pid))
+                       (int-to-bytes (get-internal-real-time))
+                       (babel:string-to-octets (machine-instance))
+                       (babel:string-to-octets (get-env "HOME" ""))
+                       (babel:string-to-octets (get-env "PATH" ""))))
+         (seed (sha256 seed-bytes)))
+    (with-static-vectors ((seed-s seed))
       (let ((ctx (cffi:foreign-alloc :char :count +yarrow256-ctx-size+)))
-        (replace seed-s seed)
         (ne:yarrow256-init ctx 0 (cffi:null-pointer))
         (ne:yarrow256-seed ctx ne:+yarrow256-seed-file-size+ (static-vector-pointer seed-s))
         (setf *yarrow-ctx* ctx)))

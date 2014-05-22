@@ -72,3 +72,37 @@
       (setf val (ash val -8)))
     (make-array (length bytes) :element-type 'octet :initial-contents bytes)))
 
+(defun get-current-pid (&key if-not-exists-return)
+  "Get the current process' PID. This function does it's best to be cross-
+   implementation. If it isn't able to grab the PID from the system, it defaults
+   to returning whatever value is passed into the :if-not-exists-return key."
+  #+clisp
+  (system::process-id)
+  #+(and lispworks unix)
+  (system::getpid)
+  #+(and sbcl unix)
+  (sb-unix:unix-getpid)
+  #+(and cmu unix)
+  (unix:unix-getpid)
+  #+openmcl
+  (ccl::getpid)
+  #+ecl
+  (ext:getpid)
+  #-(or clisp (and lispworks unix) (and sbcl unix) (and cmu unix) (and openmcl unix) openmcl)
+  if-not-exists-return)
+
+(defun get-env (name &optional (default ""))
+  "Get the value of an ENV var. Tries to be cross-platform."
+  #+clisp
+  (ext:getenv name)
+  #+lispworks
+  (lispworks:environment-variable name)
+  #+(and sbcl unix)
+  (sb-ext:posix-getenv name)
+  #+ccl
+  (ccl:getenv name)
+  #+ecl
+  (si:getenv name)
+  #-(or clisp lispworks (and sbcl unix) ecl ccl)
+  default)
+
