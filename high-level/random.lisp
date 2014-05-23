@@ -33,14 +33,14 @@
     (buffer-size :unsigned-long)))
 
 (defun random-init-bytes-windows (num-bytes)
-  "Grab 32 bytes of random data from the windows API."
+  "Grab N bytes of random data from the windows API."
   (with-static-vectors ((bytes num-bytes))
     (when (zerop (%rtl-gen-random (static-vector-pointer bytes) num-bytes))
       (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
     (copy-seq bytes)))
 
 (defun random-init-bytes-nix (num-bytes)
-  "Grab 32 bytes of random data from a sane API."
+  "Grab N bytes of random data from a sane API."
   (let ((bytes (make-array num-bytes :element-type 'octet)))
     (with-open-file (rand "/dev/urandom" :direction :input :element-type 'octet)
       (dotimes (i num-bytes)
