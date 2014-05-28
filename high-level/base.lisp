@@ -22,19 +22,41 @@
   "The actual size of a gcm_key struct in C.")
 (defconstant +gcm-aes-ctx-size+ 4408
   "The actual size of a gcm_aes_ctx struct in C.")
+(defconstant +md5-ctx-size+ 92
+  "The actual size of a md5_ctx struct in C.")
+(defconstant +sha1-ctx-size+ 96
+  "The actual size of a sha1_ctx struct in C.")
+(defconstant +sha256-ctx-size+ 108
+  "The actual size of a sha256_ctx struct in C.")
+(defconstant +sha512-ctx-size+ 216
+  "The actual size of a sha512_ctx struct in C.")
+(defconstant +hmac-md5-ctx-size+ 276
+  "The actual size of a hmac_md5_ctx struct in C.")
+(defconstant +hmac-sha1-ctx-size+ 288
+  "The actual size of a hmac_sha1_ctx struct in C.")
+(defconstant +hmac-sha256-ctx-size+ 324
+  "The actual size of a hmac_sha256_ctx struct in C.")
+(defconstant +hmac-sha512-ctx-size+ 648
+  "The actual size of a hmac_sha512_ctx struct in C.")
 
 (defmacro with-crypto-object ((bind-var type) &body body)
   "Wrapper that makes it easier to instantiate remote objects correctly. This is
    useful when CFFI reports incorrcet sizes."
-  (let ((size (case type
-                (:yarrow +yarrow256-ctx-size+)
-                (:aes +aes-ctx-size+)
-                (:gcm +gcm-ctx-size+)
-                (:gcm-key +gcm-key-size+)
-                (:gcm-aes +gcm-aes-ctx-size+))))
-    (unless size
-      (error (format nil "with-object: Bad value given for type (~a). Should be :aes :gcm :gcm-key or :gcm-aes." type)))
-    `(cffi:with-foreign-object (,bind-var :unsigned-char ,size)
+  `(let ((size (case ,type
+                 (:yarrow +yarrow256-ctx-size+)
+                 (:aes +aes-ctx-size+)
+                 (:gcm +gcm-ctx-size+)
+                 (:gcm-key +gcm-key-size+)
+                 (:gcm-aes +gcm-aes-ctx-size+)
+                 (:md5 +md5-ctx-size+)
+                 (:sha1 +sha1-ctx-size+)
+                 (:sha256 +sha256-ctx-size+)
+                 (:sha512 +sha512-ctx-size+)
+                 (:hmac-md5 +hmac-md5-ctx-size+)
+                 (:hmac-sha1 +hmac-sha1-ctx-size+)
+                 (:hmac-sha256 +hmac-sha256-ctx-size+)
+                 (:hmac-sha512 +hmac-sha512-ctx-size+))))
+     (cffi:with-foreign-object (,bind-var :unsigned-char size)
        ,@body)))
                        
 (defmacro with-static-vectors (bindings &body body)
