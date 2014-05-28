@@ -1,7 +1,7 @@
 (asdf:defsystem cl-nettle
   :author "Andrew Danger Lyon <orthecreedence@gmail.com>"
   :license "MIT"
-  :version "0.1.0"
+  :version "0.2.0"
   :description "Low-level Nettle bindings for Common Lisp."
   :depends-on (#:cffi
                #:static-vectors
