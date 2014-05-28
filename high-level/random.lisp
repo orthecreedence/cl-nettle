@@ -71,6 +71,7 @@
                          #-(and windows (not cygwin)) (random-init-bytes-nix num-bytes))
                        (int-to-bytes (get-current-pid))
                        (int-to-bytes (get-internal-real-time))
+                       (int-to-bytes (get-internal-run-time))
                        (babel:string-to-octets (machine-instance))
                        (babel:string-to-octets (get-env "HOME" ""))
                        (babel:string-to-octets (get-env "PATH" ""))))
@@ -92,7 +93,8 @@
   "Close the random context."
   (when *yarrow-ctx*
     (cffi:foreign-free *yarrow-ctx*)
-    (setf *yarrow-ctx* nil)))
+    (setf *yarrow-ctx* nil)
+    t))
 
 (defun random-bytes (num)
   "Get N random bytes."
