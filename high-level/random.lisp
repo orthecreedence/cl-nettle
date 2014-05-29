@@ -44,7 +44,7 @@
   (let ((bytes (make-array num-bytes :element-type 'octet)))
     (with-open-file (rand "/dev/urandom" :direction :input :element-type 'octet)
       (dotimes (i num-bytes)
-        (set (aref bytes i) (read-byte rand))))
+        (setf (aref bytes i) (read-byte rand))))
     bytes))
 
 (defun random-init ()
@@ -77,10 +77,10 @@
                        (babel:string-to-octets (get-env "PATH" ""))))
          (seed (sha256 seed-bytes)))
     (with-static-vectors ((seed-s seed))
-      (let ((ctx (cffi:foreign-alloc :char :count +yarrow256-ctx-size+)))
-        (ne:yarrow256-init ctx 0 (cffi:null-pointer))
-        (ne:yarrow256-seed ctx ne:+yarrow256-seed-file-size+ (static-vector-pointer seed-s))
-        (setf *yarrow-ctx* ctx)))
+      (let ((ctx (cffi:foreign-alloc :unsigned-char :count +yarrow256-ctx-size+)))
+        (setf *yarrow-ctx* ctx)
+        (ne:yarrow256-init *yarrow-ctx* 0 (cffi:null-pointer))
+        (ne:yarrow256-seed *yarrow-ctx* ne:+yarrow256-seed-file-size+ (static-vector-pointer seed-s))))
     t))
 
 (defun random-check-open ()

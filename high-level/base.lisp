@@ -12,7 +12,7 @@
 ;; manually because CFFI doesn't have a good way of nesting arrays in structs.
 ;;
 ;; See sizes.c
-(defconstant +yarrow256-ctx-size+ 488
+(defconstant +yarrow256-ctx-size+ 496
   "The actual size of a yarrow256_ctx struct in C.")
 (defconstant +aes-ctx-size+ 244
   "The actual size of a aes_ctx struct in C.")
