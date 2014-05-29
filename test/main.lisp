@@ -1,5 +1,6 @@
 (defpackage :cl-nettle-test
-  (:use :cl :fiveam :nettle-highlevel))
+  (:use :cl :fiveam :nettle-highlevel)
+  (:export :run-all))
 (in-package :cl-nettle-test)
 
 (defparameter *root* (asdf:system-relative-pathname :cl-nettle-test #P"test/")
@@ -28,4 +29,7 @@
     (dotimes (i (round (/ (length str) 2)))
       (setf (aref bytes i) (parse-integer str :start (* i 2) :end (+ (* i 2) 2) :radix 16)))
     bytes))
+
+(defun run-all ()
+  (run! 'nettle-main))
 
