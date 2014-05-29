@@ -7,8 +7,10 @@
 
 (def-suite nettle-main :description "main cl-nettle test suite")
 (def-suite nettle-hash :description "hash tests" :in nettle-main)
+(def-suite nettle-key :description "key derivation tests" :in nettle-main)
 (def-suite nettle-random :description "random tests" :in nettle-main)
-(def-suite nettle-crypto :description "crypto tests" :in nettle-main)
+(def-suite nettle-crypto :description "symetric crypto tests" :in nettle-main)
+(def-suite nettle-ecc :description "ECC tests" :in nettle-main)
 
 (defun file-contents (path)
   "Grab the *binary* contents of a file."

@@ -20,7 +20,9 @@
      (:file "base")
      (:file "random")
      (:file "hash")
+     (:file "key")
      (:file "pad")
      (:file "aes-cbc")
-     (:file "aes-gcm")))))
+     (:file "aes-gcm")
+     (:file "ecc")))))
 

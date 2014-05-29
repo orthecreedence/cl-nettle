@@ -10,6 +10,8 @@
     :components
     ((:file "main")
      (:file "hash")
+     (:file "key")
      (:file "random")
-     (:file "crypto")))))
+     (:file "crypto")
+     (:file "ecc")))))
 

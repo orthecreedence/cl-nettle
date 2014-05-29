@@ -8,7 +8,7 @@
 
 (in-package :nettle)
 
-(eval-when (:load-toplevel)
+(unless (cffi:foreign-symbol-pointer "nettle_aes_encrypt")
   (define-foreign-library nettle
     (:darwin (:or "nettle.dylib"))
     (:unix (:or "libnettle.so.4.7"
@@ -17,8 +17,9 @@
                    "libnettle.dll"))
     (t (:default "libnettle")))
   (unless (foreign-library-loaded-p 'nettle)
-    (use-foreign-library nettle))
+    (use-foreign-library nettle)))
 
+(unless (cffi:foreign-symbol-pointer "nettle_rsa_encrypt")
   (define-foreign-library hogweed
     (:darwin (:or "hogweed.dylib"))
     (:unix (:or "libhogweek.so.2.5"

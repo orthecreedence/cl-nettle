@@ -23,6 +23,8 @@
            #:sha512
            #:md5
 
+           #:pbkdf2
+
            #:encrypt-aes-cbc
            #:decrypt-aes-cbc
            
