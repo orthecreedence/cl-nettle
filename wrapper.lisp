@@ -47,7 +47,5 @@
         package))))
 
 (defmacro cffi-type (type)
-  (if (asdf:version-satisfies (asdf:find-system :cffi) "0.11.0")
-      `(quote (:struct ,type))
-      `(quote ,type)))
+  `(quote (:struct ,type)))
 

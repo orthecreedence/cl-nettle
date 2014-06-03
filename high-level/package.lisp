@@ -22,9 +22,17 @@
            #:sha256
            #:sha512
            #:md5
+           #:hmac-sha1
+           #:hmac-sha256
+           #:hmac-sha512
+           #:hmac-md5
 
            #:pbkdf2
 
+           #:pad-ansix923
+           #:pad-pkcs7
+           #:unpad
+           
            #:encrypt-aes-cbc
            #:decrypt-aes-cbc
            

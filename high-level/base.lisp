@@ -10,8 +10,12 @@
 
 ;; The following define the sizes of some useful structs. we have to do this
 ;; manually because CFFI doesn't have a good way of nesting arrays in structs.
+;; Sizes are calculated on a x64 machine because doing them on x32 will cause
+;; segfaults in x64 (sizes are too small for some structs that use unsigned/int
+;; types instead of the uint*_t types).
 ;;
 ;; See sizes.c
+;;
 (defconstant +yarrow256-ctx-size+ 496
   "The actual size of a yarrow256_ctx struct in C.")
 (defconstant +aes-ctx-size+ 244
@@ -38,6 +42,10 @@
   "The actual size of a hmac_sha256_ctx struct in C.")
 (defconstant +hmac-sha512-ctx-size+ 648
   "The actual size of a hmac_sha512_ctx struct in C.")
+(defconstant +rsa-public-key-size+ 40
+  "The actual size of a hmac_sha512_ctx struct in C.")
+(defconstant +rsa-private-key-size+ 104
+  "The actual size of a hmac_sha512_ctx struct in C.")
 
 (defmacro with-crypto-object ((bind-var type) &body body)
   "Wrapper that makes it easier to instantiate remote objects correctly. This is
@@ -55,10 +63,13 @@
                  (:hmac-md5 +hmac-md5-ctx-size+)
                  (:hmac-sha1 +hmac-sha1-ctx-size+)
                  (:hmac-sha256 +hmac-sha256-ctx-size+)
-                 (:hmac-sha512 +hmac-sha512-ctx-size+))))
+                 (:hmac-sha512 +hmac-sha512-ctx-size+)
+                 (:rsa-public-key +rsa-public-key-size+)
+                 (:rsa-private-key +rsa-private-key-size+)
+                 (t (error "bad type passed to with-crypto-object")))))
      (cffi:with-foreign-object (,bind-var :unsigned-char size)
        ,@body)))
-                       
+
 (defmacro with-static-vectors (bindings &body body)
   "Makes binding lisp arrays to static vectors much nicer. The binding forms
    can either be a lisp vector (must be unsigned byte array) OR a number value

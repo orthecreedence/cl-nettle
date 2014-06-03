@@ -5,9 +5,11 @@
 #include <nettle/hmac.h>
 #include <nettle/md5.h>
 #include <nettle/sha2.h>
-#include <nettle/ecc.h>
-#include <nettle/ecc-curve.h>
-#include <nettle/ecdsa.h>
+/*#include <nettle/ecc.h>*/
+/*#include <nettle/ecc-curve.h>*/
+/*#include <nettle/ecdsa.h>*/
+#include <nettle/rsa.h>
+#include <nettle/buffer.h>
 
 int main()
 {
@@ -28,7 +30,12 @@ int main()
 	printf("hmac_sha256_ctx: %d\n", sizeof(struct hmac_sha256_ctx));
 	printf("hmac_sha512_ctx: %d\n", sizeof(struct hmac_sha512_ctx));
 
-	printf("ecc_point: %d\n", sizeof(struct ecc_point));
-	printf("ecc_scalar: %d\n", sizeof(struct ecc_scalar));
+	/*printf("ecc_point: %d\n", sizeof(struct ecc_point));*/
+	/*printf("ecc_scalar: %d\n", sizeof(struct ecc_scalar));*/
+
+	printf("rsa_public_key: %d\n", sizeof(struct rsa_public_key));
+	printf("rsa_private_key: %d\n", sizeof(struct rsa_private_key));
+
+	printf("nettle_buffer: %d\n", sizeof(struct nettle_buffer));
 }
 

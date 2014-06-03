@@ -24,5 +24,6 @@
      (:file "pad")
      (:file "aes-cbc")
      (:file "aes-gcm")
+     (:file "rsa")
      (:file "ecc")))))
 
