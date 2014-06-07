@@ -1,6 +1,6 @@
 (defpackage :cl-nettle-test
   (:use :cl :fiveam :nettle-highlevel)
-  (:export :run-all))
+  (:export :run-tests))
 (in-package :cl-nettle-test)
 
 (defparameter *root* (asdf:system-relative-pathname :cl-nettle-test #P"test/")
@@ -21,7 +21,7 @@
       (loop for b = (read-byte s nil nil)
             while b do
         (vector-push-extend b contents)))
-    contents))
+    (coerce contents 'nec:octet-array)))
 
 (defun bytes-from-hash (str)
   "Convert ASCII hex string into actual octets."
@@ -31,6 +31,6 @@
       (setf (aref bytes i) (parse-integer str :start (* i 2) :end (+ (* i 2) 2) :radix 16)))
     bytes))
 
-(defun run-all ()
+(defun run-tests ()
   (run! 'nettle-main))
 

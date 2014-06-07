@@ -1,5 +1,5 @@
 (defpackage :nettle-highlevel
-  (:use :cl :static-vectors)
+  (:use :cl :defstar :static-vectors)
   (:nicknames :nec)
   (:export #:nettle-error
            #:nettle-auth-error
@@ -7,6 +7,7 @@
            #:octet-array
            #:with-crypto-object
            #:with-static-vectors
+           #:secure-equal
 
            #:nettle-random-error
            #:nettle-random-init-fail

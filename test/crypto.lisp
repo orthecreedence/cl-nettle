@@ -1,9 +1,12 @@
 (in-package :cl-nettle-test)
 (in-suite nettle-crypto)
 
-(defparameter *crypto-key* #(233 24 218 235 181 31 244 9 133 123 68 84 89 7 146 87 210 184 112 208 55 252 53 166 203 54 135 26 108 250 168 229))
-(defparameter *crypto-iv* #(72 7 132 125 188 100 31 249 116 69 128 94 75 97 1 91))
-(defparameter *crypto-auth* #(11 138 78 3))
+(defparameter *crypto-key*
+  (coerce #(233 24 218 235 181 31 244 9 133 123 68 84 89 7 146 87 210 184 112 208 55 252 53 166 203 54 135 26 108 250 168 229) 'nec:octet-array))
+(defparameter *crypto-iv*
+  (coerce #(72 7 132 125 188 100 31 249 116 69 128 94 75 97 1 91) 'nec:octet-array))
+(defparameter *crypto-auth*
+  (coerce #(11 138 78 3) 'nec:octet-array))
 
 (defparameter *crypto-data*
   '("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eleifend nunc ante, in rhoncus eros condimentum eu. Sed gravida arcu dui, non tempus risus tempor et."
@@ -18,31 +21,31 @@
   "Test that the AES-CBC routines match what SJCL spits out."
   (loop for (plaintext enc) on *crypto-data* by #'cddr do
     (let ((plaintext (babel:string-to-octets plaintext))
-          (ciphertext (yason:parse (getf enc :cbc) :json-arrays-as-vectors t)))
+          (ciphertext (coerce (yason:parse (getf enc :cbc) :json-arrays-as-vectors t) 'nec:octet-array)))
       (is (equalp ciphertext
                   (encrypt-aes-cbc *crypto-key*
                                    plaintext
-                                   *crypto-iv*)))
+                                   *crypto-iv*)) "(encrypt) ciphertexts to not match")
       (is (equalp plaintext
                   (decrypt-aes-cbc *crypto-key*
                                    ciphertext
-                                   *crypto-iv*))))))
+                                   *crypto-iv*)) "(decrypt) plaintexts do not match"))))
 
 (test aes-gcm
   "Test that the AES-GCM routines match what SJCL spits out."
   (loop for (plaintext enc) on *crypto-data* by #'cddr do
     (let ((plaintext (babel:string-to-octets plaintext))
-          (ciphertext (yason:parse (getf enc :gcm) :json-arrays-as-vectors t)))
+          (ciphertext (coerce (yason:parse (getf enc :gcm) :json-arrays-as-vectors t) 'nec:octet-array)))
       (is (equalp ciphertext
                   (encrypt-aes-gcm *crypto-key*
                                    plaintext
                                    *crypto-iv*
-                                   *crypto-auth*)))
+                                   *crypto-auth*)) "(encrypt) ciphertexts to not match")
       (is (equalp plaintext
                   (decrypt-aes-gcm *crypto-key*
                                    ciphertext
                                    *crypto-iv*
-                                   *crypto-auth*))))))
+                                   *crypto-auth*)) "(decrypt) plaintexts to not match"))))
 (test aes-cbc-fail
   "Test various failures for CBC."
   (signals (simple-error "Assert failure (key size)")

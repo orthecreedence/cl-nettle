@@ -7,6 +7,8 @@
 
 (deftype octet () '(unsigned-byte 8))
 (deftype octet-array () '(simple-array octet (*)))
+(deftype octet-array-32 () '(simple-array octet (32)))
+(deftype octet-array-16 () '(simple-array octet (16)))
 
 ;; The following define the sizes of some useful structs. we have to do this
 ;; manually because CFFI doesn't have a good way of nesting arrays in structs.
@@ -83,16 +85,37 @@
   (let ((form body))
     (dolist (binding (reverse bindings))
       (let ((val (gensym "val"))
-            (bind (car binding)))
-        (setf form `((let ((,val ,(cadr binding)))
-                       (static-vectors:with-static-vector (,bind
-                                                            (if (numberp ,val)
-                                                                ,val
-                                                                (length ,val)))
-                         (unless (numberp ,val)
-                           (replace ,bind ,val))
-                         ,@form))))))
+            (startval (gensym "start"))
+            (endval (gensym "end")))
+        (destructuring-bind (bind bindval &key (start 0) end)
+            binding
+          (setf form `((let ((,val ,bindval)
+                             (,startval ,start)
+                             (,endval ,end))
+                         (static-vectors:with-static-vector (,bind
+                                                              (if (numberp ,val)
+                                                                  ,val
+                                                                  (cond ((and (numberp ,startval)
+                                                                              (numberp ,endval))
+                                                                         (- ,endval ,startval))
+                                                                        ((numberp ,endval)
+                                                                         ,endval)
+                                                                        ((numberp ,startval)
+                                                                         (- (length ,val) ,startval))
+                                                                        (t (length ,val)))))
+                           (unless (numberp ,val)
+                             (replace ,bind ,val :start2 ,start :end2 ,end))
+                           ,@form)))))))
     (car form)))
+
+(defun* (secure-equal -> boolean) ((vec1 octet-array) (vec2 octet-array))
+  "Securely compare two vectors. Returns t if they match, nil otherwise, and
+   resists timing attacks using XOR for comparison."
+  (when (= (length vec1) (length vec2))
+    (let ((res (the fixnum 0)))
+      (dotimes (i (the fixnum (length vec1)))
+        (setf res (the fixnum (logior res (logxor (aref vec1 i) (aref vec2 i))))))
+      (zerop res))))
 
 (defun int-to-bytes (int)
   "Convert an integer of arbitrary size into a byte array."

@@ -3,7 +3,11 @@
 (define-condition nettle-crypto-auth-error (nettle-error) ()
   (:documentation "Thrown when message authentication fails."))
 
-(defun encrypt-aes-gcm (key plaintext iv auth)
+(defun* (encrypt-aes-gcm -> octet-array)
+          ((key octet-array-32)
+           (plaintext octet-array)
+           (iv octet-array-16)
+           (auth octet-array))
   "Encrypt the given plaintext with the key/IV/auth data. All arguments must be
    in binary form '(vector (unsigned-byte 8)). As the name implies, data is
    encrypted using AES/GCM. Appends the auth tag to the end of the returned
@@ -31,11 +35,21 @@
                    ciphertext-s
                    tag-s))))
 
-(defun decrypt-aes-gcm (key ciphertext iv auth)
+(defun* (decrypt-aes-gcm -> octet-array)
+          ((key octet-array-32)
+           (ciphertext octet-array)
+           (iv octet-array-16)
+           (auth octet-array)
+          &key ((start fixnum) 0)
+               ((end (or null fixnum)) nil))
   "Decrypt the given ciphertext with the key/IV/auth data. All arguments must be
    in binary form '(vector (unsigned-byte 8)). As the name implies, data is
    decrypted using AES/GCM. Assumes the auth tag is appended at the end of the
-   ciphertext."
+   ciphertext.
+   
+   You can optionally specify the :start/:end of the ciphertext which is useful
+   in cases where you are decrypting a large block of data that has auth info
+   encoded in the array and you don't want to copy the ciphertext out."
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (assert (or (= (length key) ne:+aes-min-key-size+)
               (= (length key) ne:+aes-max-key-size+)))
@@ -44,7 +58,7 @@
            (tag (subseq ciphertext (- (length ciphertext) tagsplit)))
            (ciphertext-length (- (length ciphertext) tagsplit)))
       (with-static-vectors ((key-s key)
-                            (ciphertext-s ciphertext)
+                            (ciphertext-s ciphertext :start start :end end)
                             (iv-s iv)
                             (auth-s auth)
                             (plaintext-s ciphertext-length)

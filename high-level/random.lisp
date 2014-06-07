@@ -96,7 +96,7 @@
     (setf *yarrow-ctx* nil)
     t))
 
-(defun random-bytes (num)
+(defun* (random-bytes -> octet-array) ((num fixnum))
   "Get N random bytes."
   (random-check-open)
   (with-static-vectors ((bytes num))

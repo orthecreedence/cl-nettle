@@ -1,25 +1,35 @@
 (in-package :nettle-highlevel)
 
-(defun run-hasher (hash-type input)
+(defun* (run-hasher -> octet-array)
+          ((hash-type symbol)
+           (input octet-array)
+          &key ((start fixnum) 0)
+               ((end (or null fixnum)) nil))
   "Run a hasher of the given type. Since all hashers follow the same basic
    patterns, all we have to do is import some symbols and we're pretty much
    done."
   (flet ((import-sym (suffix)
-           (intern (format nil "~a-~a" hash-type (string suffix)) :nettle)))
+           (declare (type symbol suffix))
+           (intern (concatenate 'string (string hash-type) "-" (string suffix)) :nettle)))
     (let ((ctx-struct (intern (string hash-type) :keyword))
           (digest-size (symbol-value (intern (format nil "+~a-DIGEST-SIZE+" hash-type) :nettle)))
           (init-fn (import-sym 'init))
           (update-fn (import-sym 'update))
           (digest-fn (import-sym 'digest)))
       (with-crypto-object (ctx ctx-struct)
-        (with-static-vectors ((input-s input)
+        (with-static-vectors ((input-s input :start start :end end)
                               (digest-s digest-size))
           (funcall init-fn ctx)
           (funcall update-fn ctx (length input) (static-vector-pointer input-s))
           (funcall digest-fn ctx digest-size (static-vector-pointer digest-s))
           (copy-seq digest-s))))))
 
-(defun run-auth-hasher (hash-type key input)
+(defun* (run-auth-hasher -> octet-array)
+          ((hash-type symbol)
+           (key octet-array)
+           (input octet-array)
+          &key ((start fixnum) 0)
+               ((end (or null fixnum)) nil))
   "Run an HMAC hasher against the given key."
   (flet ((import-sym (suffix)
            (intern (format nil "HMAC-~a-~a" hash-type (string suffix)) :nettle)))
@@ -29,7 +39,7 @@
           (update-fn (import-sym 'update))
           (digest-fn (import-sym 'digest)))
       (with-crypto-object (ctx ctx-struct)
-        (with-static-vectors ((input-s input)
+        (with-static-vectors ((input-s input :start start :end end)
                               (key-s key)
                               (digest-s digest-size))
           (funcall init-fn ctx (length key-s) (static-vector-pointer key-s))
@@ -39,13 +49,15 @@
 
 (defmacro make-hasher (hash-type)
   "Defines a hasher function for us. Simple wrapper around run-hasher."
-  `(defun ,hash-type (input)
+  `(defun* (,hash-type -> octet-array) ((input octet-array))
      ,(format nil "~a the input vector (octet vectors only, please)." hash-type)
      (run-hasher ',hash-type input)))
     
 (defmacro make-auth-hasher (hash-type)
   "Defines an HMAC hasher function for us. Simple wrapper around run-auth-hasher."
-  `(defun ,(intern (string-upcase (format nil "hmac-~a" hash-type))) (key input)
+  `(defun* (,(intern (string-upcase (format nil "hmac-~a" hash-type))) -> octet-array)
+             ((key octet-array)
+              (input octet-array))
      ,(format nil "HMAC-~a the input vector (octet vectors only, please) via the given key." hash-type)
      (run-auth-hasher ',hash-type key input)))
     
