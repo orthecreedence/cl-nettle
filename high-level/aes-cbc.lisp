@@ -32,14 +32,8 @@
 (defun* (decrypt-aes-cbc -> octet-array)
           ((key octet-array-32)
            (ciphertext octet-array)
-           (iv octet-array)
-          &key ((start fixnum) 0)
-               ((end (or null fixnum)) nil))
-  "Decrypt ciphertext via AES-CBC.
-   
-   You can optionally specify the :start/:end of the ciphertext which is useful
-   in cases where you are decrypting a large block of data that has auth info
-   encoded in the array and you don't want to copy the ciphertext out."
+           (iv octet-array))
+  "Decrypt ciphertext via AES-CBC."
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (assert (or (= (length key) ne:+aes-min-key-size+)
               (= (length key) ne:+aes-max-key-size+)))
@@ -47,7 +41,7 @@
   (with-crypto-object (ctx :aes)
     (let ((enc-fn (cffi:foreign-symbol-pointer "nettle_aes_decrypt")))
       (with-static-vectors ((key-s key)
-                            (ciphertext-s ciphertext :start start :end end)
+                            (ciphertext-s ciphertext)
                             (iv-s iv)
                             (plaintext-s (length ciphertext)))
         (ne:aes-set-decrypt-key ctx (length key) (static-vector-pointer key-s))
