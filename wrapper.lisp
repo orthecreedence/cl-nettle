@@ -45,7 +45,9 @@
                               symstr
                               (string-downcase symstr))
                           package)))
-      final)))
+      (if (eq flag 'classname-inline)
+          `(:pointer (:struct ,final))
+          final))))
 
 (defmacro cffi-type (type)
   `(quote (:struct ,type)))

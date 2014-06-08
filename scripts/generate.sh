@@ -11,6 +11,7 @@ swig -cffi -module bindings -noswig-lisp -o bindings.lisp scripts/bindings.i
 ASN1_TYPE_CONSTRUCTED_VAL="`grep ASN1_TYPE_CONSTRUCTED bindings.lisp | head -1 | sed 's|.*#\.\((cl:ash[^)]\+)\).*|\1|' `"
 sed -i "s|(cl:logior \([0-9]\+\) ASN1_TYPE_CONSTRUCTED)|(cl:logior \1 $ASN1_TYPE_CONSTRUCTED_VAL)|g" bindings.lisp
 sed -i 's|) #\.(lispify \([^ ]\+\) '"'"'classname)|) #.(lispify \1 '"'"'classname-inline)|g' bindings.lisp
+sed -i 's|^ #\.(lispify \([^ ]\+\) '"'"'classname)| #.(lispify \1 '"'"'classname-inline)|g' bindings.lisp
 
 # ------------------------------------------------------------------------------
 # make our exports

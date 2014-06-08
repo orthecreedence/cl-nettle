@@ -1316,58 +1316,58 @@
  :pointer)
 
 (cffi:defcvar ("nettle_aes128" #.(lispify "nettle_aes128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_aes192" #.(lispify "nettle_aes192" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_aes256" #.(lispify "nettle_aes256" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_arcfour128" #.(lispify "nettle_arcfour128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_camellia128" #.(lispify "nettle_camellia128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_camellia192" #.(lispify "nettle_camellia192" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_camellia256" #.(lispify "nettle_camellia256" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_cast128" #.(lispify "nettle_cast128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_serpent128" #.(lispify "nettle_serpent128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_serpent192" #.(lispify "nettle_serpent192" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_serpent256" #.(lispify "nettle_serpent256" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_twofish128" #.(lispify "nettle_twofish128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_twofish192" #.(lispify "nettle_twofish192" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_twofish256" #.(lispify "nettle_twofish256" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_arctwo40" #.(lispify "nettle_arctwo40" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_arctwo64" #.(lispify "nettle_arctwo64" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_arctwo128" #.(lispify "nettle_arctwo128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcvar ("nettle_arctwo_gutmann128" #.(lispify "nettle_arctwo_gutmann128" 'variable))
- #.(lispify "nettle_cipher" 'classname))
+ #.(lispify "nettle_cipher" 'classname-inline))
 
 (cffi:defcstruct #.(lispify "nettle_hash" 'classname)
 	(#.(lispify "name" 'slotname) :string)
@@ -1382,46 +1382,46 @@
  :pointer)
 
 (cffi:defcvar ("nettle_md2" #.(lispify "nettle_md2" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_md4" #.(lispify "nettle_md4" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_md5" #.(lispify "nettle_md5" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_gosthash94" #.(lispify "nettle_gosthash94" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_ripemd160" #.(lispify "nettle_ripemd160" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha1" #.(lispify "nettle_sha1" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha224" #.(lispify "nettle_sha224" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha256" #.(lispify "nettle_sha256" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha384" #.(lispify "nettle_sha384" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha512" #.(lispify "nettle_sha512" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha3_224" #.(lispify "nettle_sha3_224" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha3_256" #.(lispify "nettle_sha3_256" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha3_384" #.(lispify "nettle_sha3_384" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcvar ("nettle_sha3_512" #.(lispify "nettle_sha3_512" 'variable))
- #.(lispify "nettle_hash" 'classname))
+ #.(lispify "nettle_hash" 'classname-inline))
 
 (cffi:defcstruct #.(lispify "nettle_armor" 'classname)
 	(#.(lispify "name" 'slotname) :string)
@@ -1441,10 +1441,10 @@
  :pointer)
 
 (cffi:defcvar ("nettle_base64" #.(lispify "nettle_base64" 'variable))
- #.(lispify "nettle_armor" 'classname))
+ #.(lispify "nettle_armor" 'classname-inline))
 
 (cffi:defcvar ("nettle_base16" #.(lispify "nettle_base16" 'variable))
- #.(lispify "nettle_armor" 'classname))
+ #.(lispify "nettle_armor" 'classname-inline))
 
 (cl:defconstant #.(lispify "__NETTLE_STDINT_H" 'constant) 1)
 
