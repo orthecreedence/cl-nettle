@@ -60,5 +60,4 @@
 (make-accessors #.(nettle::lispify "umac96_ctx" 'classname))
 (make-accessors #.(nettle::lispify "umac128_ctx" 'classname))
 (make-accessors #.(nettle::lispify "yarrow_source" 'classname))
-(make-accessors #.(nettle::lispify "yarrow256_ctx" 'classname))
 (make-accessors #.(nettle::lispify "yarrow_key_event_ctx" 'classname))

@@ -2296,7 +2296,7 @@
 (cl:defconstant #.(lispify "SHA3_512_DATA_SIZE" 'constant) 72)
 
 (cffi:defcstruct #.(lispify "sha3_224_ctx" 'classname)
-	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname))
+	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname-inline))
 	(#.(lispify "index" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer))
 
@@ -2314,7 +2314,7 @@
   (digest :pointer))
 
 (cffi:defcstruct #.(lispify "sha3_256_ctx" 'classname)
-	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname))
+	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname-inline))
 	(#.(lispify "index" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer))
 
@@ -2332,7 +2332,7 @@
   (digest :pointer))
 
 (cffi:defcstruct #.(lispify "sha3_384_ctx" 'classname)
-	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname))
+	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname-inline))
 	(#.(lispify "index" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer))
 
@@ -2350,7 +2350,7 @@
   (digest :pointer))
 
 (cffi:defcstruct #.(lispify "sha3_512_ctx" 'classname)
-	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname))
+	(#.(lispify "state" 'slotname) #.(lispify "sha3_state" 'classname-inline))
 	(#.(lispify "index" 'slotname) :unsigned-int)
 	(#.(lispify "block" 'slotname) :pointer))
 
@@ -2615,14 +2615,6 @@
 	(#.(lispify "next" 'slotname) #.(lispify "yarrow_pool_id" 'enumname)))
 
 (cl:defconstant #.(lispify "YARROW256_SEED_FILE_SIZE" 'constant) (cl:* 2 16))
-
-(cffi:defcstruct #.(lispify "yarrow256_ctx" 'classname)
-	(#.(lispify "pools" 'slotname) :pointer)
-	(#.(lispify "seeded" 'slotname) :int)
-	(#.(lispify "key" 'slotname) :pointer)
-	(#.(lispify "counter" 'slotname) :pointer)
-	(#.(lispify "nsources" 'slotname) :unsigned-int)
-	(#.(lispify "sources" 'slotname) :pointer))
 
 (cffi:defcfun ("nettle_yarrow256_init" #.(lispify "nettle_yarrow256_init" 'function)) :void
   (ctx :pointer)

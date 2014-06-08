@@ -40,11 +40,12 @@
                   (t "")))
            (symstr (concatenate 'string fix (nreverse (helper (concatenate 'list (strip-prefix "nettle_" name)) nil nil)) fix))
            ;; test for "modern" lisp
-           (case-insensitive-p (eq (intern "MYSYM" :nettle) 'nettle::mysym)))
-      (intern (if case-insensitive-p
-                  symstr
-                  (string-downcase symstr))
-        package))))
+           (case-insensitive-p (eq (intern "MYSYM" :nettle) 'nettle::mysym))
+           (final (intern (if case-insensitive-p
+                              symstr
+                              (string-downcase symstr))
+                          package)))
+      final)))
 
 (defmacro cffi-type (type)
   `(quote (:struct ,type)))

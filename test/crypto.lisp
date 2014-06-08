@@ -45,23 +45,10 @@
                   (decrypt-aes-gcm *crypto-key*
                                    ciphertext
                                    *crypto-iv*
-                                   *crypto-auth*)) "(decrypt) plaintexts to not match"))))
-(test aes-cbc-fail
-  "Test various failures for CBC."
-  (signals (simple-error "Assert failure (key size)")
-    (encrypt-aes-cbc #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7)
-                     (babel:string-to-octets "encrypt me, plz")
-                     #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8)))
-  (signals (simple-error "Assert IV failure")
-    (encrypt-aes-cbc #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7)
-                     (babel:string-to-octets "encrypt me, plz")
-                     #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7))))
-
-(test aes-gcm-fail
-  "Test various failures for GCM."
-  (signals (simple-error "Assert failure (key size)")
-    (encrypt-aes-gcm #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7)
-                     (babel:string-to-octets "encrypt me, plz")
-                     #(1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8)
-                     #(45 89))))
+                                   *crypto-auth*)) "(decrypt) plaintexts to not match")
+      (signals (nettle-crypto-auth-error "Auth error (GCM)")
+        (decrypt-aes-gcm *crypto-key*
+                         ciphertext
+                         *crypto-iv*
+                         (subseq *crypto-auth* 0 3))))))
 

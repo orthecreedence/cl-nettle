@@ -568,7 +568,6 @@
 (export '#.(lispify "yarrow_pool_id" 'enumname))
 (export '#.(lispify "yarrow_source" 'classname))
 (export '#.(lispify "YARROW256_SEED_FILE_SIZE" 'constant))
-(export '#.(lispify "yarrow256_ctx" 'classname))
 (export '#.(lispify "nettle_yarrow256_init" 'function))
 (export '#.(lispify "nettle_yarrow256_seed" 'function))
 (export '#.(lispify "nettle_yarrow256_update" 'function))
