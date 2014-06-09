@@ -144,7 +144,7 @@
   (ccl::getpid)
   #+ecl
   (ext:getpid)
-  #-(or clisp (and lispworks unix) (and sbcl unix) (and cmu unix) (and openmcl unix) openmcl)
+  #-(or clisp (and lispworks unix) (and sbcl unix) (and cmu unix) (and openmcl unix) openmcl ecl)
   if-not-exists-return)
 
 (defun get-env (name &optional (default ""))

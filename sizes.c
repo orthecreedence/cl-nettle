@@ -11,6 +11,11 @@
 #include <nettle/rsa.h>
 #include <nettle/buffer.h>
 
+#ifdef WINDOWS
+#include <windows.h>
+#include <wincrypt.h>
+#endif
+
 int main()
 {
 	printf("aes_ctx: %d\n", sizeof(struct aes_ctx));
@@ -19,6 +24,8 @@ int main()
 	printf("gcm_aes_ctx: %d\n", sizeof(struct gcm_aes_ctx));
 
 	printf("yarrow256_ctx: %d\n", sizeof(struct yarrow256_ctx));
+
+	printf("unsigned int: %d\n", sizeof(unsigned int));
 
 	printf("md5_ctx: %d\n", sizeof(struct md5_ctx));
 	printf("sha1_ctx: %d\n", sizeof(struct sha1_ctx));
@@ -37,5 +44,13 @@ int main()
 	printf("rsa_private_key: %d\n", sizeof(struct rsa_private_key));
 
 	printf("nettle_buffer: %d\n", sizeof(struct nettle_buffer));
+
+#ifdef WINDOWS
+	printf("DWORD: %d\n", sizeof(DWORD));
+	printf("ULONG: %d\n", sizeof(ULONG));
+	printf("HCRYPTPROV: %d\n", sizeof(HCRYPTPROV));
+	printf("PROV_RSA_FULL: %u\n", PROV_RSA_FULL);
+	printf("FLAGS: %u\n", CRYPT_VERIFYCONTEXT | CRYPT_SILENT);
+#endif
 }
 

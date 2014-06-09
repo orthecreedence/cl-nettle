@@ -26,18 +26,80 @@
     (cffi:define-foreign-library advapi32 (:windows "advapi32"))
     (cffi:use-foreign-library advapi32))
 
-  (cffi:defcfun ("GetLastError" %get-last-error) :unsigned-int)
+  (cffi:defcfun ("CryptAcquireContextW" %crypt-acquire-context) :int
+                (hprovider :pointer)
+                (container :pointer)
+                (provider :pointer)
+                (type :unsigned-int)
+                (flags :unsigned-int))
+
+  (cffi:defcfun ("CryptGenRandom" %crypt-gen-random) :int
+                (hprovider :int)
+                (length :unsigned-int)
+                (buffer :pointer))
   
+  (cffi:defcfun ("CryptReleaseContext" %crypt-release-context) :int
+                (hprovider :int)
+                (flags :unsigned-int))
+
+  (cffi:defcfun ("GetLastError" %get-last-error) :unsigned-int)
+
   (cffi:defcfun ("SystemFunction036" %rtl-gen-random) :int
     (buffer :pointer)
     (buffer-size :unsigned-long)))
 
-(defun random-init-bytes-windows (num-bytes)
-  "Grab N bytes of random data from the windows API."
+;; unused, this is the low-level way to generate randoms in win.
+(defun random-init-bytes-windows-low-level (num-bytes)
   (with-static-vectors ((bytes num-bytes))
     (when (zerop (%rtl-gen-random (static-vector-pointer bytes) num-bytes))
       (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
     (copy-seq bytes)))
+
+(defun random-init-bytes-windows (num-bytes)
+  "Grab N bytes of random data from the windows API."
+  ;; we need some ECL/windows-specific stuff here because of annoying segfaults
+  ;; in ECL when using CFFI (for some reason the call to CryptAcquireContextW
+  ;; fails).
+  #+ecl
+  (with-static-vectors ((bytes num-bytes))
+    (ffi:clines "
+      #include <windows.h>
+      #include <wincrypt.h>
+      #include <stdio.h>
+      int windows_get_random_bytes_nettle(unsigned size, unsigned char *bytes)
+      {
+          HCRYPTPROV hprov = 0;
+          if(!CryptAcquireContextW(&hprov, 0, 0, 1, 4026531904)) return 0;
+          if(!CryptGenRandom(hprov, size, bytes)) return 0;
+          CryptReleaseContext(hprov, 0);
+          return 1;
+      }
+    ")
+    (let ((res (ffi:c-inline (num-bytes (static-vector-pointer bytes))
+                             (:unsigned :pointer)
+                             :int
+                 "windows_get_random_bytes_nettle(fix(#0), ecl_to_pointer(#1))"
+                 :side-effects nil
+                 :one-liner t)))
+      (when (zerop res)
+        (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error)))))
+    (copy-seq bytes))
+  #-ecl
+  (cffi:with-foreign-object (hprov :unsigned-int)
+    (let ((res (%crypt-acquire-context hprov
+                                       (cffi:null-pointer)
+                                       (cffi:null-pointer)
+                                       1
+                                       4026531904)))
+      (when (zerop res)
+        (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
+      (with-static-vectors ((bytes (* 3 num-bytes)))
+        (let* ((ctx (cffi:mem-aref hprov :unsigned-int))
+               (res (%crypt-gen-random ctx num-bytes (static-vector-pointer bytes))))
+          (when (zerop res)
+            (error 'nettle-random-init-fail :msg (format nil "Error inializing random context: 0x~x" (%get-last-error))))
+          (%crypt-release-context ctx 0)
+          (copy-seq bytes))))))
 
 (defun random-init-bytes-nix (num-bytes)
   "Grab N bytes of random data from a sane API."
